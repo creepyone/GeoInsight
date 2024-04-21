@@ -3,7 +3,7 @@ import os.path
 import numpy as np
 import torch
 import torch.nn as nn
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from PIL import Image
 from ultralytics import YOLO
@@ -25,8 +25,8 @@ def model():
     img_data = np.array(list(data['image'].values())).astype('uint8')
     R, G, B = (
         img_data[0::4].reshape(height, width)
-       , img_data[1::4].reshape(height, width)
-       , img_data[2::4].reshape(height, width)
+        , img_data[1::4].reshape(height, width)
+        , img_data[2::4].reshape(height, width)
     )
 
     image = np.transpose(np.stack([R, G, B], axis=0), (1, 2, 0))
