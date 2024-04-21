@@ -23,7 +23,6 @@ def model():
     data = request.get_json()
     width, height = data['width'], data['height']
     img_data = np.array(list(data['image'].values())).astype('uint8')
-
     R, G, B = (
         img_data[0::4].reshape(height, width)
        , img_data[1::4].reshape(height, width)
