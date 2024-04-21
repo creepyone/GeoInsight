@@ -16,14 +16,19 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.post('/api/get_prediction')
+@app.post('/model_api/get_prediction')
 def model():
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
     data = request.get_json()
     width, height = data['width'], data['height']
     img_data = np.array(list(data['image'].values())).astype('uint8')
-    R,G,B = img_data[0::4].reshape(height, width), img_data[1::4].reshape(height, width), img_data[2::4].reshape(height, width)
+
+    R, G, B = (
+        img_data[0::4].reshape(height, width)
+       , img_data[1::4].reshape(height, width)
+       , img_data[2::4].reshape(height, width)
+    )
 
     image = np.transpose(np.stack([R, G, B], axis=0), (1, 2, 0))
     pil_image = Image.fromarray(image)

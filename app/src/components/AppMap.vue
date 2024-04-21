@@ -14,7 +14,7 @@ export default {
       leafletImage(this.minimap, function (err, canvas) {
           var image_data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
           axios.post(
-            'http://127.0.0.1:5000/api/get_prediction'
+            'http://127.0.0.1:5000/model_api/get_prediction'
             , {image: image_data.data, width: image_data.width, height: image_data.height}
             )
             .then(response => {
