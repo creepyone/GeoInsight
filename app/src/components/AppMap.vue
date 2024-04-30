@@ -5,12 +5,16 @@ import axios from "axios";
 export default {
   data() {
     return {
-      minimap: null // добавляем map в data
+      minimap: null, // добавляем map в data
+      placeholderMap: null,
+      placeholderLayerControl: null
     };
   },
   methods: {
     action() {
-      // var snapshot = document.getElementById('snapshot');
+      var mapp = this.placeholderMap[0];
+      var layy = this.placeholderLayerControl[0];
+
       leafletImage(this.minimap, function (err, canvas) {
           var image_data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
           axios.post(
@@ -19,20 +23,37 @@ export default {
             )
             .then(response => {
               console.log(response)
-              var seg_image = document.getElementById('segmentation_image')
-              seg_image.src = response.data['path_segmentation']
-              var detection_image = document.getElementById('detection_image')
-              detection_image.src = response.data['path_detection']
-              var mask_image = document.getElementById('mask_image')
-              mask_image.src = response.data['path_mask_only']
+              //var seg_image = document.getElementById('segmentation_image')
+              //seg_image.src = response.data['path_segmentation']
+              //var detection_image = document.getElementById('detection_image')
+              //detection_image.src = response.data['path_detection']
+              //var mask_image = document.getElementById('mask_image')
+              //mask_image.src = response.data['path_mask_only']
+
+              var coordinates = mapp.getBounds();
+              var northEast = [coordinates.getSouthWest().lat, coordinates.getSouthWest().lng];
+              var southWest = [coordinates.getNorthEast().lat, coordinates.getNorthEast().lng];
+              coordinates = [southWest, northEast];
+
+              var imageSegmentation_url = "data:image/png" + ";base64," + btoa(response.data['path_segmentation']);
+              var imageSegmentation = L.imageOverlay(imageSegmentation_url, coordinates);
+              layy.addOverlay(imageSegmentation, "Классифицированные поверхности"); 
+
+              var imageDetection_url = "data:image/png" + ";base64," + btoa(response.data['path_detection']);
+              var imageDetection = L.imageOverlay(imageDetection_url, coordinates);
+              layy.addOverlay(imageDetection, "Найденные здания"); 
+              
               console.log(response.status)
             }).catch((e) => {
               alert('Model server is not responding!')
-        });
+            });
       })
     },
   },
   mounted() {
+    this.placeholderMap = [];
+    this.placeholderLayerControl = [];
+
     var map = L.map(this.$refs['mapElement'], {
       zoomControl: true,
       maxZoom: 18,
@@ -41,6 +62,7 @@ export default {
       [55.635207589609905, 37.64153644777789],
       [55.63828100193793, 37.66559566363489],
     ]);
+    this.placeholderMap.push(map);
     var hash = new L.Hash(map);
     map.attributionControl.setPrefix(
       '<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>'
@@ -109,7 +131,7 @@ export default {
     document.getElementsByClassName('leaflet-control-geocoder-icon')[0].title +=
       'Search for a place';
     var baseMaps = {};
-    L.control
+    var layerControl =L.control
       .layers(
         baseMaps,
         {
@@ -118,7 +140,8 @@ export default {
         { collapsed: false }
       )
       .addTo(map);
-    setBounds();
+    this.placeholderLayerControl.push(layerControl);
+      setBounds();
     this.minimap = map;
 
     map.on('moveend', function () {
