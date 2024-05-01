@@ -1,11 +1,9 @@
 <script>
-import { saveAs } from 'file-saver';
 import axios from "axios";
-
 export default {
   data() {
     return {
-      minimap: null, // добавляем map в data
+      minimap: null,
       placeholderMap: null,
       placeholderLayerControl: null
     };
@@ -14,7 +12,6 @@ export default {
     action() {
       var mapp = this.placeholderMap[0];
       var layy = this.placeholderLayerControl[0];
-
       leafletImage(this.minimap, function (err, canvas) {
           var image_data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
           axios.post(
@@ -35,13 +32,11 @@ export default {
               var southWest = [coordinates.getNorthEast().lat, coordinates.getNorthEast().lng];
               coordinates = [southWest, northEast];
 
-              var imageSegmentation_url = "data:image/png" + ";base64," + btoa(response.data['path_segmentation']);
-              var imageSegmentation = L.imageOverlay(imageSegmentation_url, coordinates);
+              var imageSegmentation = L.imageOverlay(response.data['path_segmentation'], coordinates);
               layy.addOverlay(imageSegmentation, "Классифицированные поверхности"); 
 
-              var imageDetection_url = "data:image/png" + ";base64," + btoa(response.data['path_detection']);
-              var imageDetection = L.imageOverlay(imageDetection_url, coordinates);
-              layy.addOverlay(imageDetection, "Найденные здания"); 
+              var imageDetection = L.imageOverlay(response.data['path_detection'], coordinates);
+              layy.addOverlay(imageDetection, "Найденные здания");
               
               console.log(response.status)
             }).catch((e) => {
