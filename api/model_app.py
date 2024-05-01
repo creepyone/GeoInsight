@@ -3,7 +3,7 @@ import os.path
 import numpy as np
 import torch
 import torch.nn as nn
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from PIL import Image
 from ultralytics import YOLO
@@ -36,6 +36,8 @@ def model():
     pil_image.resize((640, 640)).save('detection_tmp.png')
     result = yolo(['detection_tmp.png'])
     img_detection = result[0].plot(font_size=12, pil=True, labels=True, line_width=2)
+
+    print(result[0].boxes)
 
     gallery_dir = '../app/images_gallery'
     if not os.path.exists(gallery_dir):
