@@ -20,12 +20,10 @@ export default {
             )
             .then(response => {
               console.log(response)
-              //var seg_image = document.getElementById('segmentation_image')
-              //seg_image.src = response.data['path_segmentation']
-              //var detection_image = document.getElementById('detection_image')
-              //detection_image.src = response.data['path_detection']
-              //var mask_image = document.getElementById('mask_image')
-              //mask_image.src = response.data['path_mask_only']
+              const current = new Date();
+              const date = current.getDate()+'/'+(current.getMonth()+1)+'/'+current.getFullYear();
+              const time = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
+              const dateTime = date +' '+ time;
 
               var coordinates = mapp.getBounds();
               var northEast = [coordinates.getSouthWest().lat, coordinates.getSouthWest().lng];
@@ -33,10 +31,10 @@ export default {
               coordinates = [southWest, northEast];
 
               var imageSegmentation = L.imageOverlay(response.data['path_segmentation'], coordinates);
-              layy.addOverlay(imageSegmentation, "Классифицированные поверхности"); 
+              layy.addOverlay(imageSegmentation, "Классифицированные поверхности " + dateTime); 
 
               var imageDetection = L.imageOverlay(response.data['path_detection'], coordinates);
-              layy.addOverlay(imageDetection, "Найденные здания");
+              layy.addOverlay(imageDetection, "Найденные здания " + dateTime);
               
               console.log(response.status)
             }).catch((e) => {
@@ -130,7 +128,7 @@ export default {
       .layers(
         baseMaps,
         {
-          'Google Satellite': layer_GoogleSatellite_0,
+          
         },
         { collapsed: false }
       )
@@ -300,13 +298,5 @@ export default {
       </div>
     </div>
     <hr>
-    <div id="result">
-      <h3>Результаты</h3>
-        <img id="detection_image">
-        <img id="segmentation_image">
-        <img id="mask_image">
-    </div>
-    <div id="snapshot"></div>
-
   </container>
 </template>
