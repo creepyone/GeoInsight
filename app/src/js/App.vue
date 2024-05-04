@@ -1,12 +1,13 @@
 <script setup>
-import Header from '../components/AppHeader.vue'
+import HeaderAuthorized from '../components/AppHeaderAuthorized.vue'
+import HeaderNotAuthorized from '../components/AppHeaderNotAuthorized.vue'
 import Footer from '../components/AppFooter.vue'
 import Map from '../components/AppMap.vue'
 </script>
 
 <template>
   <div class="container px-3 mx-auto">
-    <Header />
+    <HeaderAuthorized />
     <Map />
     <Footer />
   </div>
