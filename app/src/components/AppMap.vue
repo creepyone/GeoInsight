@@ -14,9 +14,22 @@ export default {
       var layy = this.placeholderLayerControl[0];
       leafletImage(this.minimap, function (err, canvas) {
           var image_data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+          var flags = {
+            'Water': document.getElementById("water").checked
+            , 'Trees': document.getElementById("trees").checked
+            , 'Building': document.getElementById("buildings").checked
+            , 'Agriculture': document.getElementById("fields").checked
+            , 'Road': document.getElementById("roads").checked
+            , 'buildings_detection': document.getElementById("buildings_detection").checked
+          }
           axios.post(
             'http://127.0.0.1:5000/model_api/get_prediction'
-            , {image: image_data.data, width: image_data.width, height: image_data.height}
+            , {
+              image: image_data.data
+              , width: image_data.width
+              , height: image_data.height
+              , ml_task_flags: flags
+            }
             )
             .then(response => {
               console.log(response)
@@ -32,9 +45,12 @@ export default {
 
               var imageSegmentation = L.imageOverlay(response.data['path_segmentation'], coordinates);
               layy.addOverlay(imageSegmentation, "Классифицированные поверхности " + dateTime); 
+              
+              if (response.data['path_detection'] != null){
+                var imageDetection = L.imageOverlay(response.data['path_detection'], coordinates);
+                layy.addOverlay(imageDetection, "Найденные здания " + dateTime);
+              }
 
-              var imageDetection = L.imageOverlay(response.data['path_detection'], coordinates);
-              layy.addOverlay(imageDetection, "Найденные здания " + dateTime);
               
               console.log(response.status)
             }).catch((e) => {
@@ -220,6 +236,7 @@ export default {
           <input
             class="form-check-input flex-shrink-0"
             type="checkbox"
+            id="water"
             value=""
             checked
           />
@@ -230,7 +247,9 @@ export default {
           <input
             class="form-check-input flex-shrink-0"
             type="checkbox"
+            id="trees"
             value=""
+            checked
           />
           <small class="d-block text-body-secondary">Деревья</small>
         </label>
@@ -239,7 +258,9 @@ export default {
           <input
             class="form-check-input flex-shrink-0"
             type="checkbox"
+            id="buildings"
             value=""
+            checked
           />
           <small class="d-block text-body-secondary">Застройка</small>
         </label>
@@ -248,7 +269,9 @@ export default {
           <input
             class="form-check-input flex-shrink-0"
             type="checkbox"
+            id="fields"
             value=""
+            checked
           />
           <small class="d-block text-body-secondary">Поля</small>
         </label>
@@ -257,7 +280,9 @@ export default {
           <input
             class="form-check-input flex-shrink-0"
             type="checkbox"
+            id="roads"
             value=""
+            checked
           />
           <small class="d-block text-body-secondary">Дороги</small>
         </label>
@@ -268,7 +293,9 @@ export default {
           <input
             class="form-check-input flex-shrink-0"
             type="checkbox"
+            id="buildings_detection"
             value=""
+            checked
           />
           <small class="d-block text-body-secondary">Включить детекцию</small>
         </label>
