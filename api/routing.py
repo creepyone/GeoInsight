@@ -1,19 +1,14 @@
-import os.path
-
-import numpy as np
-import torch
-import torch.nn as nn
-from flask import Flask, jsonify, request
-from flask_cors import CORS
 from PIL import Image
 from ultralytics import YOLO
 import segmentation_models_pytorch as smp
-from ml.models.segmentation.utils import CLASSES_IDS_TO_COLORS_DICT
+from ml.models.segmentation.utils import CLASSES_IDS_TO_COLORS_DICT, CLASSES_INFO_DICT
 from datetime import datetime
-
-app = Flask(__name__)
-
-CORS(app)
+import os.path
+import numpy as np
+import torch
+import torch.nn as nn
+from api import app
+from flask import jsonify, request
 
 
 @app.post('/model_api/get_prediction')
@@ -21,6 +16,10 @@ def model():
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
     data = request.get_json()
+    ml_task_flags = data['ml_task_flags']
+
+    print(ml_task_flags)
+
     width, height = data['width'], data['height']
     img_data = np.array(list(data['image'].values())).astype('uint8')
     R, G, B = (
@@ -32,19 +31,19 @@ def model():
     image = np.transpose(np.stack([R, G, B], axis=0), (1, 2, 0))
     pil_image = Image.fromarray(image)
 
-    yolo = YOLO('model_weights/yolo8_weights.pt')
-    pil_image.resize((640, 640)).save('detection_tmp.png')
-    result = yolo(['detection_tmp.png'])
-    img_detection = result[0].plot(font_size=12, pil=True, labels=True, line_width=2)
-
-    print(result[0].boxes)
-
     gallery_dir = '../app/images_gallery'
     if not os.path.exists(gallery_dir):
         os.mkdir(gallery_dir)
 
-    path_detection = f'{gallery_dir}/detection{timestamp}.png'
-    Image.fromarray(img_detection).resize((1024, 1024)).save(path_detection)
+    path_detection = None
+
+    if ml_task_flags['buildings_detection']:
+        yolo = YOLO('model_weights/yolo8_weights.pt')
+        pil_image.resize((640, 640)).save('detection_tmp.png')
+        result = yolo(['detection_tmp.png'])
+        img_detection = result[0].plot(font_size=12, pil=True, labels=True, line_width=2)
+        path_detection = f'{gallery_dir}/detection{timestamp}.png'
+        Image.fromarray(img_detection).resize((1024, 1024)).save(path_detection)
 
     unet = smp.Unet(
         encoder_name='resnet50',
@@ -62,9 +61,16 @@ def model():
 
     new_preds = np.ndarray(shape=(preds.shape[0], preds.shape[1], 3), dtype='uint8')
 
+    ignore_keys = {'buildings_detection'}
+    to_make_null = {
+        CLASSES_INFO_DICT[item]['code'] for item in ml_task_flags
+        if not ml_task_flags[item] and item not in ignore_keys
+    }
+
     for j in range(0, preds.shape[0]):
         for k in range(0, preds.shape[1]):
-            new_preds[j][k] = CLASSES_IDS_TO_COLORS_DICT[preds[j][k]]
+            new_preds[j][k] = CLASSES_IDS_TO_COLORS_DICT[preds[j][k]] if preds[j][k] not in to_make_null \
+                else CLASSES_IDS_TO_COLORS_DICT[0]
 
     init_image = Image.fromarray(image_segmentation).convert("RGBA")
     segm_result = Image.fromarray(new_preds).convert("RGBA")
@@ -82,10 +88,6 @@ def model():
     skip_path_elems = 7
     return jsonify({
         'path_segmentation': path_segmentation[skip_path_elems:]
-        , 'path_detection':  path_detection[skip_path_elems:]
+        , 'path_detection':  path_detection[skip_path_elems:] if path_detection else None
         , 'path_mask_only': path_mask[skip_path_elems:]
     })
-
-
-if __name__ == '__main__':
-    app.run()
