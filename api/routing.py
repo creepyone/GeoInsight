@@ -1,19 +1,14 @@
-import os.path
-
-import numpy as np
-import torch
-import torch.nn as nn
-from flask import Flask, jsonify, request
-from flask_cors import CORS
 from PIL import Image
 from ultralytics import YOLO
 import segmentation_models_pytorch as smp
 from ml.models.segmentation.utils import CLASSES_IDS_TO_COLORS_DICT, CLASSES_INFO_DICT
 from datetime import datetime
-
-app = Flask(__name__)
-
-CORS(app)
+import os.path
+import numpy as np
+import torch
+import torch.nn as nn
+from api import app
+from flask import jsonify, request
 
 
 @app.post('/model_api/get_prediction')
@@ -96,7 +91,3 @@ def model():
         , 'path_detection':  path_detection[skip_path_elems:] if path_detection else None
         , 'path_mask_only': path_mask[skip_path_elems:]
     })
-
-
-if __name__ == '__main__':
-    app.run()
