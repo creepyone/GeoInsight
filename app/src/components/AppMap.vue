@@ -44,11 +44,11 @@ export default {
               coordinates = [southWest, northEast];
 
               var imageSegmentation = L.imageOverlay(response.data['path_segmentation'], coordinates);
-              layy.addOverlay(imageSegmentation, "Классификация от " + time); 
+              layy.addOverlay(imageSegmentation, "Классифицированные поверхности " + dateTime); 
               
               if (response.data['path_detection'] != null){
                 var imageDetection = L.imageOverlay(response.data['path_detection'], coordinates);
-                layy.addOverlay(imageDetection, "Детекция от " + time);
+                layy.addOverlay(imageDetection, "Найденные здания " + dateTime);
               }
 
               
