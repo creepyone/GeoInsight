@@ -34,22 +34,22 @@ const router = createRouter({
       name: 'sign-up',
     },
     {
-      path: '/authorized/analysis',
+      path: '/authorized/:id/analysis',
       component: Analysis,
       name: 'analysis',
     },
     {
-      path: '/authorized/history',
+      path: '/authorized/:id/history',
       component: History,
       name: 'history',
     },
     {
-      path: '/authorized',
+      path: '/authorized/:id',
       component: MainScreenAuth,
       name: 'main-screen-auth',
     },
     {
-      path: '/authorized/aboutus',
+      path: '/authorized/:id/aboutus',
       component: AboutUsAuth,
       name: 'about-us-auth',
     },

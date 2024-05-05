@@ -37,7 +37,7 @@
       */
       if (true)
       {
-        router.push({ name: 'main-screen-auth' })
+        router.push({ name: 'main-screen-auth', params: { id: 123 } })
       }
   }
 </script>
