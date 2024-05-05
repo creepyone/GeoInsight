@@ -46,6 +46,7 @@ export default {
               var imageSegmentation = L.imageOverlay(response.data['path_segmentation'], coordinates);
               layy.addOverlay(imageSegmentation, "Классификация от " + time); 
               
+              console.log(response.data['path_detection'])
               if (response.data['path_detection'] != null){
                 var imageDetection = L.imageOverlay(response.data['path_detection'], coordinates);
                 layy.addOverlay(imageDetection, "Детекция от " + time);

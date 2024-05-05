@@ -1,52 +1,58 @@
 <script setup>
   import {useRouter} from 'vue-router'
+  import axios from "axios";
   const router = useRouter()
   function register() {
-    var name = document.getElementById("nameInput")?.value;
-    var email = document.getElementById("emailInput")?.value;
+    var login = document.getElementById("loginInput")?.value;
     var password = document.getElementById("passwordInput")?.value;
     // Проверка на длину имени
-    if (name.length <= 2) {
-      alert("В поле Имя должно быть указано более 2 символов");
+    if (login.length <= 2) {
+      alert("В поле Логин должно быть указано более 2 символов");
       return;
     }
 
-    // Проверка на валидный email-адрес
-    if (!/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(email)) {
-      alert("В поле Email должен быть указан валидный email-адрес");
-      return;
-    }
+    // // Проверка на валидный email-адрес
+    // if (!/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(email)) {
+    //   alert("В поле Email должен быть указан валидный email-адрес");
+    //   return;
+    // }
 
     // Проверка на длину пароля
-    if (password.length < 6 || password.length > 16) {
+    if (password.length < 6 || password.length > 14) {
       alert("В поле Пароль должно быть указано от 6 до 16 символов");
       return;
     }
     
     const data = {
-      name: name,
-      email: email,
+      login: login,
       password: password
     };
-    console.log(data);
-    /*
+    // console.log(data);
+    // /*
 
     axios.post(
-      'http://127.0.0.1:5000/model_api/get_prediction'
-      , {image: image_data.data, width: image_data.width, height: image_data.height}
+        'http://127.0.0.1:5000/user_api/register'
+        , data
       )
       .then(response => {
         console.log(response)
-        console.log(response.status)
-      }).catch((e) => {
-        alert('Model server is not responding!')
-      });
-      */
 
-      if (true)
-      {
+        var user_id = response.data['user_id'] // тут лежит id пользователя
+        var login = response.data['login']
         router.push({ name: 'main-screen-auth', params: { id: 123 } })
-      }
+
+      }).catch((e) => {
+        if (e.response) {
+          var error_p = document.getElementById('error')
+          var status_code = e.response.status_code
+          if (status_code = 409) {
+            error_p.innerHTML = 'Пользователь с таким логином уже существует!'
+          }
+
+        } else {
+          alert('Внутренняя ошибка сервера')
+        }
+      });
 
   }
 </script>
@@ -90,16 +96,15 @@
     <main class="form-signin w-100 m-auto">
     <form id="register-form">
       <div class="form-floating">
-        <input type="text" class="form-control" id="nameInput" placeholder="Иван">
-        <label for="floatingInput">Имя</label>
-      </div>
-      <div class="form-floating">
-        <input type="email" class="form-control" id="emailInput" placeholder="name@example.com">
-        <label for="floatingInput">Email-адрес</label>
+        <input type="text" class="form-control" id="loginInput" placeholder="Admin">
+        <label for="floatingInput">Логин</label>
       </div>
       <div class="form-floating">
         <input type="password" class="form-control" id="passwordInput" placeholder="Password">
         <label for="floatingPassword">Пароль</label>
+      </div>
+      <div class="form-floating">
+        <p id="error" style="color:red" align="center" font-color="red"></p>
       </div>
       <button class="btn btn-primary w-100 py-2" id="btn-reqister" type="button" @click="register()">Зарегистрироваться</button>
     </form>

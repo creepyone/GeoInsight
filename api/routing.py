@@ -9,6 +9,10 @@ import torch
 import torch.nn as nn
 from api import app
 from flask import jsonify, request
+from api import db
+from sqlalchemy import select, insert
+from api.models import User, AnalysisResult
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 @app.post('/model_api/get_prediction')
@@ -86,8 +90,53 @@ def model():
     segm_result.resize((1024, 1024)).save(path_mask)
 
     skip_path_elems = 7
+
+    prefix = '../' * 2
     return jsonify({
-        'path_segmentation': path_segmentation[skip_path_elems:]
-        , 'path_detection':  path_detection[skip_path_elems:] if path_detection else None
-        , 'path_mask_only': path_mask[skip_path_elems:]
+        'path_segmentation': prefix + path_segmentation[skip_path_elems:]
+        , 'path_detection': prefix + path_detection[skip_path_elems:] if path_detection else None
+        , 'path_mask_only': prefix + path_mask[skip_path_elems:]
     })
+
+
+@app.post('/user_api/register')
+def register_user():
+    data = request.get_json()
+    login = data['login']
+    user_data = db.session.execute(select(User).where(User.login == login)).first()
+
+    if user_data:
+        return data, 409
+
+    password = data['password']
+    user = db.session.execute(
+        insert(User).returning(User)
+        , [
+            {
+                'login': login
+                , 'password_hash': generate_password_hash(password)
+            }
+        ]
+    ).first()[0]
+
+    db.session.commit()
+
+    return jsonify({"user_id": user.user_id, "login": login}), 201
+
+
+@app.post('/user_api/login')
+def login_user():
+    data = request.get_json()
+    login = data['login']
+    user_data = db.session.execute(select(User).where(User.login == login)).first()
+
+    if not user_data:
+        return jsonify({'auth_error': 'Пользователя с указанным логином не существует'}), 401
+    else:
+        user = user_data[0]
+        password = data['password']
+
+        if check_password_hash(user.password_hash, password):
+            return jsonify({"user_id": user.user_id, "login": login}), 200
+        else:
+            return jsonify({'auth_error': 'Неверный пароль пользователя'}), 401
