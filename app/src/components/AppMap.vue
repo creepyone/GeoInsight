@@ -29,6 +29,7 @@ export default {
               , width: image_data.width
               , height: image_data.height
               , ml_task_flags: flags
+              , user_id: parseInt(window.location.pathname.split('/')[2])
             }
             )
             .then(response => {

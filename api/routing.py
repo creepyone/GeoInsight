@@ -17,12 +17,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 @app.post('/model_api/get_prediction')
 def model():
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    timestamp_dttm = datetime.now()
+    timestamp = timestamp_dttm.strftime('%Y%m%d_%H%M%S')
 
     data = request.get_json()
-    ml_task_flags = data['ml_task_flags']
 
-    print(ml_task_flags)
+    ml_task_flags = data['ml_task_flags']
 
     width, height = data['width'], data['height']
     img_data = np.array(list(data['image'].values())).astype('uint8')
@@ -89,14 +89,34 @@ def model():
     path_mask = f'{gallery_dir}/mask{timestamp}.png'
     segm_result.resize((1024, 1024)).save(path_mask)
 
+    path_original = f'{gallery_dir}/original{timestamp}.png'
+    pil_image.resize((1024, 1024)).save(path_original)
+
     skip_path_elems = 7
 
+    user_id = data['user_id']
+
     prefix = '../' * 2
+
+    db.session.execute(
+        insert(AnalysisResult)
+        , [
+            {
+                'user_id': user_id
+                , 'created_dttm': timestamp_dttm
+                , 'segmentation_image': prefix + path_segmentation[skip_path_elems:]
+                , 'detection_image': prefix + path_detection[skip_path_elems:] if path_detection else None
+                , 'original_image': prefix + path_original[skip_path_elems:]
+            }
+        ]
+    )
+    db.session.commit()
+
     return jsonify({
         'path_segmentation': prefix + path_segmentation[skip_path_elems:]
         , 'path_detection': prefix + path_detection[skip_path_elems:] if path_detection else None
         , 'path_mask_only': prefix + path_mask[skip_path_elems:]
-    })
+    }), 201
 
 
 @app.post('/user_api/register')
