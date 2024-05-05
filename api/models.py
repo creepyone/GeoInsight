@@ -41,4 +41,4 @@ class AnalysisResult(db.Model):
     original_image: so.Mapped[str] = so.mapped_column(sa.String(40))
 
     def __repr__(self):
-        return '<Result_id {0} User> {1}'.format(self.analysis_id, self.user_login)
+        return '<Result_id {0} User> {1}'.format(self.analysis_id, self.user_id)

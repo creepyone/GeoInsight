@@ -160,3 +160,44 @@ def login_user():
             return jsonify({"user_id": user.user_id, "login": login}), 200
         else:
             return jsonify({'auth_error': 'Неверный пароль пользователя'}), 401
+
+
+@app.get('/analysis_api/analysis_history')
+def get_user_history():
+    user_id = request.args.get('user_id')
+    analysis_data = db.session.scalars(
+        select(AnalysisResult)
+        .where(AnalysisResult.user_id == user_id)
+        .order_by(AnalysisResult.created_dttm.desc())
+    )
+
+    data = []
+    for idx, item in enumerate(analysis_data, start=1):
+        data.append({
+            'new_id': idx
+            , 'created_dttm': item.created_dttm
+            , 'segmentation_image': item.segmentation_image
+            , 'detection_image': item.detection_image
+            , 'original_image': item.original_image
+        })
+
+    return jsonify(data), 200
+
+
+@app.get('/analysis_api/analysis_info')
+def get_analysis():
+    user_id = request.args.get('user_id')
+    analysis_id = request.args.get('analysis_id')
+
+    analysis_result = db.session.scalars(
+        select(AnalysisResult)
+        .where((AnalysisResult.user_id == user_id) & (AnalysisResult.analysis_id == analysis_id))
+        .order_by(AnalysisResult.created_dttm.desc())
+    ).first()
+
+    return jsonify({
+        'created_dttm': analysis_result.created_dttm
+        , 'segmentation_image': analysis_result.segmentation_image
+        , 'detection_image': analysis_result.detection_image
+        , 'original_image': analysis_result.original_image
+    }), 200
