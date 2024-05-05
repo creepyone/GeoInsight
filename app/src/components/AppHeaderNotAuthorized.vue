@@ -1,3 +1,10 @@
+<script setup>
+  import {
+    useRouter
+  } from 'vue-router'
+  const router = useRouter()
+</script>
+
 <template>
 <container>
   
@@ -5,13 +12,13 @@
 
   <ul class="nav col-12 col-md-auto mb-md-0">
 
-    <li><a href="#" class="nav-link px-2 link-secondary">GeoInsignt</a></li>
-    <li><a href="#" class="nav-link px-2">О нас</a></li>
+    <li><a href="#" class="nav-link px-2 link-secondary" @click="router.push({ name: 'main-screen-not-auth' })">GeoInsignt</a></li>
+    <li><a href="#" class="nav-link px-2" @click="router.push({ name: 'about-us-not-auth' })">О нас</a></li>
   </ul>
 
   <div class="col-md-3 text-end">
-    <button type="button" class="btn btn-outline-primary me-2">Войти</button>
-    <button type="button" class="btn btn-primary">Зарегистрироваться</button>
+    <button type="button" class="btn btn-outline-primary me-2" @click="router.push({ name: 'log-in' })">Войти</button>
+    <button type="button" class="btn btn-primary" @click="router.push({ name: 'sign-up' })">Зарегистрироваться</button>
   </div>
   </header>
 </container>

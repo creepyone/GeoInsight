@@ -1,8 +1,8 @@
-<script>
-export default {
-  data() {},
-  methods: {},
-};
+<script setup>
+  import {
+    useRouter
+  } from 'vue-router'
+  const router = useRouter()
 </script>
 
 <template>
@@ -16,6 +16,10 @@ export default {
       спутниковых изображений. Использование технологий компьютерного зрения
       позволяет автоматизировать процессы по анализу местности, минимизировать
       человеческие ошибки и повысить точность результатов.
+    </p>
+    <p class="col-md-10 col-lg-12 mx-auto lead" align="center">
+      Для использования возможностей GeoInsight
+      <router-link :to="{ name: 'log-in' }">войдите в систему</router-link> или <router-link :to="{ name: 'sign-up' }">зарегистрируйтесь</router-link>.
     </p>
   </container>
 </template>

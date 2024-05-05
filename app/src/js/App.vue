@@ -1,15 +1,6 @@
-<script setup>
-import HeaderAuthorized from '../components/AppHeaderAuthorized.vue'
-import HeaderNotAuthorized from '../components/AppHeaderNotAuthorized.vue'
-import Footer from '../components/AppFooter.vue'
-import Map from '../components/AppMap.vue'
-</script>
-
 <template>
   <div class="container px-3 mx-auto">
-    <HeaderAuthorized />
-    <Map />
-    <Footer />
+    <router-view />
   </div>
 </template>
 
@@ -27,3 +18,4 @@ import Map from '../components/AppMap.vue'
   filter: drop-shadow(0 0 2em #42b883aa);
 }
 </style>
+

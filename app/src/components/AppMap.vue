@@ -196,7 +196,9 @@ export default {
 
 <template>
   <container>
-    <h4>Анализ поверхности с помощью компьютерного зрения</h4>
+    <h4 class="display-8 fw-normal" align="center">
+      Анализ поверхности с помощью компьютерного зрения
+    </h4>
 
     <div class="d-flex p-2 bd-highlight">
       Выберите область для анализа на карте:

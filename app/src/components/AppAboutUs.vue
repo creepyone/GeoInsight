@@ -25,7 +25,9 @@ export default {
 
 <template>
   <container>
-    <h2>О программе GeoInsight</h2>
+    <h2 class="display-8 fw-normal" align="center">
+      О программе GeoInsight
+    </h2>
     <div class="bd-callout bd-callout-warning small">
     <p class="col-md-10 col-lg-12 mx-auto lead" align="justify">
       Для ознакомления с системой вы можете <a href="user_guide" download>скачать руководство пользователя</a>
