@@ -175,6 +175,7 @@ def get_user_history():
     for idx, item in enumerate(analysis_data, start=1):
         data.append({
             'new_id': idx
+            , 'id': item.analysis_id
             , 'created_dttm': item.created_dttm
             , 'segmentation_image': item.segmentation_image
             , 'detection_image': item.detection_image
@@ -196,7 +197,8 @@ def get_analysis():
     ).first()
 
     return jsonify({
-        'created_dttm': analysis_result.created_dttm
+        'id': analysis_result.analysis_id
+        , 'created_dttm': analysis_result.created_dttm
         , 'segmentation_image': analysis_result.segmentation_image
         , 'detection_image': analysis_result.detection_image
         , 'original_image': analysis_result.original_image
