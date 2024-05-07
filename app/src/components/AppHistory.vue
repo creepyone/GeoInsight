@@ -26,20 +26,20 @@ export default {
     const data = {
       user_id: user_id
     };
-    console.log(data);
-    axios.post(
-      'http://127.0.0.1:5000/analysis_api/analysis_history'
-      , data
+    axios.get(
+        'http://127.0.0.1:5000/analysis_api/analysis_history'
+        , {
+            params: data
+        }
     )
     .then(response => {
-      response.data.forEach(function(item){
-        this.array.append(item)
-      })
+      for (var item in response.data) {
+        this.array.push(response.data[item])
+      }
     }).catch((e) => {
       if (e.response) {
         alert('Внутренняя ошибка сервера')
       }
-      else alert('Внутренняя ошибка сервера')
     });
   },
 };
@@ -66,12 +66,12 @@ export default {
       </tr>
     </thead>
     <tbody>
-      <tr v-for="item in array" :key="item.id" @click="show_analysis(item.id)">
-        <td>{{ item.new_id }}</td>
-        <td>{{ item.created_dttm }}</td>
-        <td><img :src="item.original_image" width="100" height="100"></td>
-        <td><img :src="item.segmentation_image" width="100" height="100"></td>
-        <td><img v-if="item.detection_image != null" :src="item.detection_image" width="100" height="100"></td>
+      <tr v-for="item in array" class='text-center':key="item.id" @click="show_analysis(item.id)">
+        <td class="align-middle">{{ item.new_id }}</td>
+        <td class="align-middle">{{ item.created_dttm }}</td>
+        <td class="align-middle"><img :src="item.original_image" width="100" height="100"></td>
+        <td class="align-middle"><img :src="item.segmentation_image" width="100" height="100"></td>
+        <td class="align-middle"><img v-if="item.detection_image != null" :src="item.detection_image" width="100" height="100"></td>
       </tr>
     </tbody>
   </table>

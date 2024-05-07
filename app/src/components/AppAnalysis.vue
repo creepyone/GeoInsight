@@ -4,8 +4,6 @@ import {computed} from 'vue'
 import {useRoute} from 'vue-router'
 import {useRouter} from 'vue-router'
 const route = useRoute()
-const user_id = parseInt(window.location.pathname.split('/')[2])
-const analysis_id = parseInt(window.location.pathname.split('/')[4])
 
 export default {
   data() {
@@ -15,16 +13,19 @@ export default {
     };
   },
   mounted() {
-    console.log(user_id)
-    console.log(analysis_id)
+    var user_id = parseInt(window.location.pathname.split('/')[2])
+    var analysis_id = parseInt(window.location.pathname.split('/')[4])
+
     const data = {
         user_id: user_id,
         analysis_id: analysis_id
     };
     console.log(data);
-    axios.post(
-      'http://127.0.0.1:5000//analysis_api/analysis_info'
-      , data
+    axios.get(
+      'http://127.0.0.1:5000/analysis_api/analysis_info',
+      {
+        params: data
+      }
     )
     .then(response => {
         this.item = response.data
@@ -52,7 +53,7 @@ export default {
         >
           <span role="status">Назад</span>
     </button>
-  <h4 class="display-8 fw-normal" align="center">
+  <h4 class="display-8 fw-normal" align="center" v-if="item != null">
   Запрос от {{item.created_dttm}}
   </h4>
   <table class="table table-striped" width="50%">
@@ -63,7 +64,7 @@ export default {
         <th scope="col">Найденные здания</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody v-if="item != null">
       <tr>
         <td><img :src="item.original_image" width="400" height="400"></td>
         <td><img :src="item.segmentation_image" width="400" height="400"></td>
