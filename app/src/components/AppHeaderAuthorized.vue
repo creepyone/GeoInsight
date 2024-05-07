@@ -23,7 +23,6 @@
         <img src="..\css\images\dog.png" alt="mdo" width="32" height="32" class="rounded-circle">
       </a>
       <ul class="dropdown-menu text-small">
-        <li><a class="dropdown-item" href="#">Профиль</a></li>
         <li><a class="dropdown-item" href="#" @click="router.push({ name: 'history' })">История запросов</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="#" @click="router.push({ name: 'main-screen-not-auth' })">Выйти</a></li>

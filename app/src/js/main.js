@@ -10,6 +10,9 @@ import Analysis from '../views/AnalysisView.vue';
 import History from '../views/HistoryView.vue';
 import MainScreenAuth from '../views/MainScreenView.vue';
 import AboutUsAuth from '../views/AboutUsAuthView.vue';
+import AnalysisInfo from '../views/AnalysisInfoView.vue';
+
+import NotFoundView from '../views/NotFoundView.vue';
 
 const router = createRouter({
   routes: [
@@ -53,6 +56,16 @@ const router = createRouter({
       component: AboutUsAuth,
       name: 'about-us-auth',
     },
+    {
+      path: '/authorized/:id/history/:id_analysis',
+      component: AnalysisInfo,
+      name: 'history-analysis-info',
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: '404',
+      component: NotFoundView
+    }
   ],
   history: createWebHistory(),
 });
