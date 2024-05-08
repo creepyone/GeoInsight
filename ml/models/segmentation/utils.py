@@ -1,30 +1,12 @@
 import numpy as np
 
 CLASSES_INFO_DICT = {
-    'None': {
-        'alter_name': 'Пусто'
-        , 'code': 0
-    }
-    , 'Agriculture': {
-        'alter_name': 'Агрозона'
-        , 'code': 1
-    }
-    , 'Trees': {
-        'alter_name': 'Лес'
-        , 'code': 2
-    }
-    , 'Building': {
-        'alter_name': 'Здание'
-        , 'code': 3
-    }
-    , 'Road': {
-        'alter_name': 'Дорога'
-        , 'code': 4
-    }
-    , 'Water': {
-        'alter_name': 'Вода'
-        , 'code': 5
-    }
+    'None': {'alter_name': 'Пусто', 'code': 0}
+    , 'Agriculture': {'alter_name': 'Агрозона', 'code': 1}
+    , 'Trees': {'alter_name': 'Лес', 'code': 2}
+    , 'Building': {'alter_name': 'Здание', 'code': 3}
+    , 'Road': {'alter_name': 'Дорога', 'code': 4}
+    , 'Water': {'alter_name': 'Вода', 'code': 5}
 }
 
 
