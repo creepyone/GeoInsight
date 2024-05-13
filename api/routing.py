@@ -196,10 +196,13 @@ def get_analysis():
         .order_by(AnalysisResult.created_dttm.desc())
     ).first()
 
-    return jsonify({
-        'id': analysis_result.analysis_id
-        , 'created_dttm': analysis_result.created_dttm
-        , 'segmentation_image': analysis_result.segmentation_image
-        , 'detection_image': analysis_result.detection_image
-        , 'original_image': analysis_result.original_image
-    }), 200
+    if analysis_result:
+        return jsonify({
+            'id': analysis_result.analysis_id
+            , 'created_dttm': analysis_result.created_dttm
+            , 'segmentation_image': analysis_result.segmentation_image
+            , 'detection_image': analysis_result.detection_image
+            , 'original_image': analysis_result.original_image
+        }), 200
+
+    return {}, 200

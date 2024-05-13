@@ -4,7 +4,7 @@ import {computed} from 'vue'
 import {useRoute} from 'vue-router'
 import {useRouter} from 'vue-router'
 const route = useRoute()
-const user_id = parseInt(window.location.pathname.split('/')[2])
+var user_id = null;
 
 export default {
   data() {
@@ -23,6 +23,7 @@ export default {
     }
   },
   mounted() {
+    user_id = parseInt(window.location.pathname.split('/')[2])
     const data = {
       user_id: user_id
     };

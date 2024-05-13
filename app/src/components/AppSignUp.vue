@@ -39,6 +39,8 @@
 
         var user_id = response.data['user_id'] // тут лежит id пользователя
         var login = response.data['login']
+
+        console.log(user_id, login)
         router.push({ name: 'main-screen-auth', params: { id: user_id } })
 
       }).catch((e) => {
