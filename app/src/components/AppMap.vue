@@ -5,13 +5,51 @@ export default {
     return {
       minimap: null,
       placeholderMap: null,
-      placeholderLayerControl: null
+      placeholderLayerControl: null,
+      pkk: []
     };
   },
   methods: {
+    addPKK() {
+      var mapp = this.placeholderMap[0];
+      var btn_PKK = document.getElementById("btn-pkk");
+      var btn_analyze = document.getElementById("btn-analyze");
+
+      if (btn_PKK.textContent == "Добавить кадастровую карту")
+      {
+        mapp.createPane('pane_pkk_rosreestr_1');
+        mapp.getPane('pane_pkk_rosreestr_1').style.zIndex = 800;
+        var layer_pkk_rosreestr_1 = L.tileLayer('https://gext.ru/rosreestr_xyz/{z}/{x}/{y}.png', {
+          pane: 'pane_pkk_rosreestr_1',
+          opacity: 1.0,
+          attribution: '',
+          maxZoom: 18,
+          minZoom: 15,
+          minNativeZoom: 0,
+          maxNativeZoom: 20,
+        });
+        mapp.addLayer(layer_pkk_rosreestr_1);
+        btn_PKK.textContent = "Скрыть кадастровую карту";
+        btn_analyze.disabled = true;
+        this.placeholderMap[0] = mapp;
+        this.pkk.push(layer_pkk_rosreestr_1);
+      }
+      else
+      {
+        console.log(this.pkk[0]);
+        console.log(mapp.hasLayer(this.pkk[0]));
+        mapp.removeLayer(this.pkk.pop());
+        btn_PKK.textContent = "Добавить кадастровую карту";
+        btn_analyze.disabled = false;
+        this.placeholderMap[0] = mapp;
+      }
+
+    },
     action() {
       var mapp = this.placeholderMap[0];
       var layy = this.placeholderLayerControl[0];
+      var coordinates = mapp.getBounds();
+
       leafletImage(this.minimap, function (err, canvas) {
           var image_data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
           var flags = {
@@ -39,7 +77,6 @@ export default {
               const time = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
               //const dateTime = date +' '+ time;
 
-              var coordinates = mapp.getBounds();
               var northEast = [coordinates.getSouthWest().lat, coordinates.getSouthWest().lng];
               var southWest = [coordinates.getNorthEast().lat, coordinates.getNorthEast().lng];
               coordinates = [southWest, northEast];
@@ -130,6 +167,7 @@ export default {
     );
     layer_GoogleSatellite_0;
     map.addLayer(layer_GoogleSatellite_0);
+
     var osmGeocoder = new L.Control.Geocoder({
       collapsed: true,
       position: 'topleft',
@@ -157,7 +195,7 @@ export default {
 
     map.on('moveend', function () {
       this.minimap = map;
-      console.log('moving:', map.getBounds());
+      //console.log('moving:', map.getBounds());
     });
 
     map.on('dragend', function onDragEnd() {
@@ -308,23 +346,19 @@ export default {
           id="btn-analyze"
           type="button"
           @click="action()"
-          style="position: relative; top: 80px; left: 0px"
+          style="position: relative; top: 20px; left: 0px"
         >
           <span role="status">Проанализировать</span>
         </button>
 
         <button
           class="btn btn-primary"
-          id="btn-process"
+          id="btn-pkk"
           type="button"
-          style="visibility: hidden"
-          disabled
+          @click="addPKK()"
+          style="position: relative; top: 40px; left: 0px"
         >
-          <span
-            class="spinner-border spinner-border-sm"
-            aria-hidden="true"
-          ></span>
-          <span role="status"> Loading...</span>
+          <span role="status">Добавить кадастровую карту</span>
         </button>
       </div>
     </div>
